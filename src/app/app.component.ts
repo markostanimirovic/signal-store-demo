@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-root',
+  selector: 'ngrx-root',
   standalone: true,
+  template: 'app',
   imports: [],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  title = 'signal-store-demo';
-}
+export class AppComponent {}
