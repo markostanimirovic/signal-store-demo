@@ -7,14 +7,22 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
+import { setAllEntities, withEntities } from '@ngrx/signals/entities';
+import {
+  setFulfilled,
+  setPending,
+  withRequestStatus,
+} from '../shared/state/request-status.feature';
 import { Book } from './book.model';
 import { BooksService } from './books.service';
 
 export const BooksStore = signalStore(
-  withState({ books: [] as Book[], isPending: false, query: '' }),
-  withComputed(({ books, query }) => ({
+  withState({ query: '' }),
+  withEntities<Book>(),
+  withRequestStatus(),
+  withComputed(({ entities, query }) => ({
     filteredBooks: computed(() =>
-      books().filter(({ title }) =>
+      entities().filter(({ title }) =>
         title.toLowerCase().includes(query().toLowerCase()),
       ),
     ),
@@ -24,10 +32,10 @@ export const BooksStore = signalStore(
       patchState(store, { query });
     },
     async loadAll() {
-      patchState(store, { isPending: true });
+      patchState(store, setPending());
 
       const books = await booksService.getAll();
-      patchState(store, { books, isPending: false });
+      patchState(store, setAllEntities(books), setFulfilled());
     },
   })),
   withHooks({ onInit: ({ loadAll }) => loadAll() }),
